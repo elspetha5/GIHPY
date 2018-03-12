@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Giphy Gifs</title>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
+    <style>
+        body {
+            padding: 0px 10%;
+        }
+
+        #container {
+            background: rgb(241, 241, 241);
+            margin: 0px 20px;
+            padding: 5px 30px;
+            min-height: 750px;
+        }
+
+        h1 {
+            text-align: center;
+            margin: auto;
+            background: rgb(230, 88, 32);
+            color: white;
+            padding: 15px;
+        }
+
+        #favShows {
+            margin-top: 30px;
+            margin-bottom: 10px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .pic {
+            height: 150px;
+        }
+
+        .gifDiv {
+            float: left;
+            margin: 5px;
+        }
+
+        .rating {
+            font-weight: bold;
+        }
+
+        #newButton {
+            margin-top: 40px;
+            margin-bottom: 40px;
+        }
+    </style>
+
+</head>
+
+<body>
+    <h1>Choosy Moms Choose GIPHY</h1>
+
+
+    <div id="container">
+        <p id="favShows">Favorite TV Shows:</p>
+        <div id="buttons"></div>
+
+        <form id="newButton">
+            <label for="addSearch">
+                <strong>Add a new show:</strong>
+            </label>
+            <br>
+            <input type="text" id="userShow" placeholder="ie. The Honeymooners">
+            <input type="submit" id="addShow" value="Add New Show">
+        </form>
+
+        <div id="gifs"></div>
+
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            var topics = ["Gilmore Girls", "The Office", "Justified", "It's Always Sunny in Philidelphia"];
+
+
+            function makeButtons() {
+                $("#buttons").empty();
+                for (var i = 0; i < topics.length; i++) {
+                    var a = $("<button>");
+                    a.addClass("topic-btn").attr("data-name", topics[i]).text(topics[i]);
+                    $("#buttons").append(a);
+                }
+            };
+
+            makeButtons();
+
+            $(".topic-btn").on("click", function () {
+                $("#gifs").empty();
+                var show = $(this).attr("data-name");
+                var queryURL = "https://api.giphy.com/v1/gifs/search?api_key=NU6o9kt3lIwoKlMXUdDVJ7UzxNz9DyWS&q=" + show + "&rating=&limit=10";
+
+
+                $.ajax({
+                    url: queryURL,
+                    method: "GET"
+                }).then(function (response) {
+                    var picture = response.data;
+                    for (var i = 0; i < picture.length; i++) {
+                        var gifDiv = $("<div>").addClass("gifDiv");
+
+                        var movingUrl = picture[i].images.original.url;
+                        var stillUrl = picture[i].images.original_still.url;
+                        var showImage = $("<img>");
+                        showImage.attr("src", stillUrl).attr("data-still", stillUrl).attr("data-animate", movingUrl).attr("data-state", "still");
+                        showImage.attr("alt", "show image").addClass("pic");
+                        gifDiv.append(showImage);
+
+                        var rated = picture[i].rating.toUpperCase();
+                        var rating = $("<p>").addClass("rating");
+                        rating.append("Rated: " + rated);
+                        gifDiv.prepend(rating);
+
+                        $("#gifs").prepend(gifDiv);
+                    };
+                });
+            });
+
+            function animate() {
+                var state = $(this).attr("data-state");
+                if (state == "still") {
+                    $(this).attr("src", $(this).attr("data-animate"));
+                    $(this).attr("data-state", "moving");
+                } else {
+                    $(this).attr("src", $(this).attr("data-still"));
+                    $(this).attr("data-state", "still");
+                }
+            };
+
+            $(document).on("click", ".pic", animate);
+        });
+    </script>
+</body>
+
+</html>

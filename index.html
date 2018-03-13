@@ -10,15 +10,14 @@
         crossorigin="anonymous"></script>
     <style>
         body {
-            padding: 0px 10%;
+            padding: 20px 13%;
             background-image: url("cloudy-day.png");
         }
 
         #container {
-            background: rgba(241, 241, 241, 0.774);
-            margin: 0px 20px;
-            padding: 5px 30px;
-            min-height: 750px;
+            background: rgba(241, 241, 241, 0.562);
+            padding: 20px 50px;
+            min-height: 1250px;
         }
 
         h1 {
@@ -37,7 +36,7 @@
         }
 
         .topic-btn {
-            margin: 0px 10px;
+            margin: 5px 5px;
             padding: 5px;
             background: rgba(255, 99, 71, 0.842);
             color: white;
@@ -51,10 +50,14 @@
         .gifDiv {
             float: left;
             margin: 5px;
+            padding: 10px;
+            border: 2px solid white;
+            background: rgba(241, 241, 241, 0.562);
         }
 
         .rating {
             font-weight: bold;
+            margin-top: 0px;
         }
 
         #newButton {
@@ -62,8 +65,23 @@
         }
 
         #userShow {
-            margin: 10px 20px;
+            margin: 10px 0px 10px 20px;
+            padding: 3px;
         }
+
+        #addShow, #clear, #clearGifs {
+            padding: 2px;
+            background: rgba(255, 99, 71, 0.842);
+            color: white;
+            border: 2px solid rgba(226, 85, 60, 0.836);
+        }
+
+        #directions {
+            color: tomato;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
     </style>
 
 </head>
@@ -82,7 +100,8 @@
             </label>
             <br>
             <input type="text" id="userShow" placeholder="ie. The Honeymooners">
-            <input type="submit" id="addShow" value="Add New Show">
+            <input type="submit" id="addShow" value="Add your show">
+            <input type="submit" id="clearGifs" value="Clear gifs">
         </form>
 
         <div id="gifs"></div>
@@ -91,7 +110,7 @@
 
     <script>
         $(document).ready(function () {
-            var topics = ["Gilmore Girls", "The Office", "Justified", "It's Always Sunny in Philidelphia"];
+            var topics = ["Gilmore Girls", "The Office", "Justified", "It's Always Sunny in Philidelphia", "Fringe", "Scrubs"];
 
 
             function makeButtons() {
@@ -105,7 +124,7 @@
 
             makeButtons();
 
-            $(".topic-btn").on("click", function () {
+            function giphify() {
                 $("#gifs").empty();
                 var show = $(this).attr("data-name");
                 var queryURL = "https://api.giphy.com/v1/gifs/search?api_key=NU6o9kt3lIwoKlMXUdDVJ7UzxNz9DyWS&q=" + show + "&rating=&limit=10";
@@ -133,8 +152,12 @@
 
                         $("#gifs").prepend(gifDiv);
                     };
+
+                    var directions = $("<p>").attr("id", "directions");
+                    directions.text("Click a gif for animation");
+                    $("#gifs").prepend(directions);
                 });
-            });
+            };
 
             function animate() {
                 var state = $(this).attr("data-state");
@@ -147,7 +170,20 @@
                 }
             };
 
+            $("#addShow").on("click", function (event) {
+                event.preventDefault();
+                var newShow = $("#userShow").val().trim();
+                topics.push(newShow);
+                makeButtons();
+            });
+
+            $("#clearGifs").on("click", function (event) {
+                event.preventDefault();
+                $("#gifs").empty();
+            });
+
             $(document).on("click", ".pic", animate);
+            $(document).on("click", ".topic-btn", giphify);
         });
     </script>
 </body>

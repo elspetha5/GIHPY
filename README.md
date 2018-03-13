@@ -1,4 +1,4 @@
-# GIHPY Gifs
+# GIPHY Gifs
 Link to app: https://elspetha5.github.io/GIPHY/
 
 ![Screenshot](screenshot.PNG)
